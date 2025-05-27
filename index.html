@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/icon.png">
+    <title>Jogo da forca</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+
+            background-image: url(img/background.png);
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+
+            overflow-y: hidden;
+
+            font-family: "Pixelify Sans", sans-serif;
+        }
+
+        main {
+            width: 100%;
+            height: 100%;
+
+
+        }
+
+        .principal {
+            width: 100%;
+            height: 60%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+
+            color: white;
+        }
+        #letters, #style{
+            font-size: 25px;
+        }
+
+        #lifes img {
+            width: 50px;
+        }
+
+        #exibition-words {
+            font-size: 30px;
+        }
+
+        .keyboard {
+            width: 100%;
+            height: 40%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            border-top: 15px solid transparent;
+            border-image: url(img/madeira.png) 100 repeat;
+
+            background-color: #fec355d5;
+        }
+
+        .keyboard button {
+            width: 200px;
+            height: 40px;
+
+            border: 2px solid #732e04;
+            border-radius: 10px;
+
+            background-color: #fec355;
+            color: #023550;
+
+            font-family: "Pixelify Sans", sans-serif;
+            font-size: 18px;
+        }
+
+        .keyboard button:hover {
+            scale: 1.03;
+        }
+
+        .keyboard button:active {
+            border: 2px solid #fec355;
+
+            background-color: #732e04;
+            color: #fec355;
+        }
+
+        #tecla1,
+        #tecla2,
+        #tecla3 {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        #tecla1 input,
+        #tecla2 input,
+        #tecla3 input {
+            width: 50px;
+            height: 40px;
+
+            background-color: #fec355;
+            color: #023550;
+
+            border: 2px solid #732e04;
+            clip-path: polygon(0% 8%, 8% 0%, 92% 0%, 100% 8%, 100% 92%, 92% 100%,
+                    8% 100%, 0% 92%);
+
+            font-family: "Pixelify Sans", sans-serif;
+            font-size: 18px;
+        }
+
+        #tecla1 input:hover,
+        #tecla2 input:hover,
+        #tecla3 input:hover {
+            background-color: #b98d3b;
+        }
+
+        #tecla1 input:active,
+        #tecla2 input:active,
+        #tecla3 input:active {
+            background-color: #fec355;
+        }
+        @media (max-width: 570px) {
+            #tecla1 input,
+        #tecla2 input,
+        #tecla3 input {
+            width: 29px;
+            height: 35px;
+        }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+
+    </header>
+    <main>
+        <div class="principal" id="principal">
+            <h1 id="result">Jogo da forca</h1>
+
+            <p id="style"></p>
+
+            <p id="exibition-words"></p>
+            <p id="letters"></p>
+
+            <div id="lifes">
+            </div>
+        </div>
+
+        <div class="keyboard" id="keyboard">
+            <form id="tecla1"></form>
+            <form id="tecla2"></form>
+            <form id="tecla3"></form>
+
+            <button id="restart" style="display: none;" onclick="startGame()">Recomeçar</button>
+            <a href="https://igor-bragawow.github.io/Unblocked-Games/"><button>Voltar</button></a>
+        </div>
+    </main>
+    <script>
+
+        var words = [
+            ['Abacaxi', 'Fruta'],
+            ['Amora', 'Fruta'],
+            ['Banana', 'Fruta'],
+            ['Caju', 'Fruta'],
+            ['Cereja', 'Fruta'],
+            ['Coco', 'Fruta'],
+            ['Damasco', 'Fruta'],
+            ['Figo', 'Fruta'],
+            ['Goiaba', 'Fruta'],
+            ['Jabuticaba', 'Fruta'],
+            ['Kiwi', 'Fruta'],
+            ['Laranja', 'Fruta'],
+            ['Limao', 'Fruta'],
+            ['Manga', 'Fruta'],
+            ['Melancia', 'Fruta'],
+            ['Melao', 'Fruta'],
+            ['Pera', 'Fruta'],
+            ['Pessego', 'Fruta'],
+            ['Uva', 'Fruta'],
+            ['Acerola', 'Fruta'],
+            ['Pitanga', 'Fruta'],
+            ['Cachorro', 'Animal'],
+            ['Gato', 'Animal'],
+            ['Elefante', 'Animal'],
+            ['Leao', 'Animal'],
+            ['Tigre', 'Animal'],
+            ['Zebra', 'Animal'],
+            ['Girafa', 'Animal'],
+            ['Hipopotamo', 'Animal'],
+            ['Rinoceronte', 'Animal'],
+            ['Macaco', 'Animal'],
+            ['Coelho', 'Animal'],
+            ['Pato', 'Animal'],
+            ['Galinha', 'Animal'],
+            ['Cavalo', 'Animal'],
+            ['Vaca', 'Animal'],
+            ['Porco', 'Animal'],
+            ['Ovelha', 'Animal'],
+            ['Lobo', 'Animal'],
+            ['Raposa', 'Animal'],
+            ['Urso', 'Animal'],
+            ['Pinguim', 'Animal'],
+            ['Golfinho', 'Animal'],
+            ['Baleia', 'Animal'],
+            ['Tubarão', 'Animal'],
+            ['Crocodilo', 'Animal'],
+            ['Serpente', 'Animal'],
+            ['Borboleta', 'Animal'],
+            ['Abelha', 'Animal'],
+            ['Formiga', 'Animal'],
+            ['Aranha', 'Animal'],
+            ['Lagarto', 'Animal'],
+            ['Tartaruga', 'Animal'],
+            ['Amarelo', 'Cor'],
+            ['Azul', 'Cor'],
+            ['Vermelho', 'Cor'],
+            ['Verde', 'Cor'],
+            ['Branco', 'Cor'],
+            ['Preto', 'Cor'],
+            ['Cinza', 'Cor'],
+            ['Roxo', 'Cor'],
+            ['Rosa', 'Cor'],
+            ['Marrom', 'Cor'],
+            ['Laranja', 'Cor'],
+            ['Dourado', 'Cor'],
+            ['Prateado', 'Cor'],
+            ['Turquesa', 'Cor'],
+            ['Espanha', 'País'],
+            ['França', 'País'],
+            ['Alemanha', 'País'],
+            ['Italia', 'País'],
+            ['Japao', 'País'],
+            ['China', 'País'],
+            ['India', 'País'],
+            ['Canada', 'País'],
+            ['Mexico', 'País'],
+            ['Argentina', 'País'],
+            ['Portugal', 'País'],
+            ['Egito', 'País'],
+            ['Grecia', 'País'],
+            ['Australia', 'País'],
+            ['Medico', 'Profissão'],
+            ['Professor', 'Profissão'],
+            ['Engenheiro', 'Profissão'],
+            ['Advogado', 'Profissão'],
+            ['Cozinheiro', 'Profissão'],
+            ['Pintor', 'Profissão'],
+            ['Musico', 'Profissão'],
+            ['Ator', 'Profissão'],
+            ['Bailarino', 'Profissão'],
+            ['Jornalista', 'Profissão'],
+            ['Arquiteto', 'Profissão'],
+            ['Dentista', 'Profissão'],
+            ['Fazendeiro', 'Profissão'],
+            ['Mecanico', 'Profissão'],
+            ['Bombeiro', 'Profissão'],
+            ['Cadeira', 'Objeto'],
+            ['Mesa', 'Objeto'],
+            ['Livro', 'Objeto'],
+            ['Caneta', 'Objeto'],
+            ['Celular', 'Objeto'],
+            ['Computador', 'Objeto'],
+            ['Televisao', 'Objeto'],
+            ['Geladeira', 'Objeto'],
+            ['Fogao', 'Objeto'],
+            ['Carro', 'Objeto'],
+            ['Bicicleta', 'Objeto'],
+            ['Relogio', 'Objeto'],
+            ['Espelho', 'Objeto'],
+            ['Tesoura', 'Objeto'],
+            ['Martelo', 'Objeto'],
+            ['Chave', 'Objeto'],
+            ['Sapato', 'Objeto'],
+            ['Roupa', 'Objeto'],
+            ['Boneca', 'Objeto'],
+            ['Bola', 'Objeto'],
+            ['Escada', 'Objeto'],
+            ['Janela', 'Objeto'],
+            ['Porta', 'Objeto'],
+            ['Sao Paulo', 'Cidade'],
+            ['Rio de Janeiro', 'Cidade'],
+            ['Belo Horizonte', 'Cidade'],
+            ['Salvador', 'Cidade'],
+            ['Curitiba', 'Cidade'],
+            ['Fortaleza', 'Cidade'],
+            ['Recife', 'Cidade'],
+            ['Manaus', 'Cidade'],
+            ['Brasilia', 'Cidade'],
+            ['Futebol', 'Esporte'],
+            ['Basquete', 'Esporte'],
+            ['Tenis', 'Esporte'],
+            ['Natacao', 'Esporte'],
+            ['Volei', 'Esporte'],
+            ['Ciclismo', 'Esporte'],
+            ['Atletismo', 'Esporte'],
+            ['Judo', 'Esporte'],
+            ['Boxe', 'Esporte'],
+            ['Oceano', 'Natureza'],
+            ['Montanha', 'Natureza'],
+            ['Rio', 'Natureza'],
+            ['Floresta', 'Natureza'],
+            ['Deserto', 'Natureza'],
+            ['Arco-iris', 'Fenômeno'],
+            ['Trovão', 'Fenômeno'],
+            ['Relâmpago', 'Fenômeno'],
+            ['Neblina', 'Fenômeno'],
+            ['Ventania', 'Fenômeno'],
+            ['Cachoeira', 'Natureza'],
+            ['Vulcão', 'Natureza']
+        ];
+
+        let exibition_word;
+        let letters;
+        let chosen_word;
+        let vidas = 6;
+
+        function startGame() {
+            chosen_word = words[Math.floor(Math.random() * words.length)];
+
+            chosen_word[0] = chosen_word[0].toUpperCase();
+
+            document.getElementById('style').innerText = chosen_word[1]
+
+            exibition_word = Array(chosen_word[0].length).fill('_');
+            letters = [];
+
+            document.getElementById('result').innerHTML = 'Jogo da forca'
+            vidas = 6
+            document.getElementById('restart').style.display = 'none'
+
+            newExibition();
+        }
+
+        function chute(letra) {
+            if (letters.includes(letra)) {
+                alert('Você já tentou essa letra');
+                return;
+            }
+
+            letters.push(letra);
+
+            if (chosen_word[0].includes(letra)) {
+                for (let i = 0; i < chosen_word[0].length; i++) {
+                    if (chosen_word[0][i] === letra) {
+                        exibition_word[i] = letra;
+                    }
+                }
+            }
+        }
+
+        startGame();
+
+        function newExibition() {
+            document.getElementById('exibition-words').innerText = exibition_word.join('  ')
+            document.getElementById('letters').innerText = letters.join(', ')
+
+            var lifes_div = document.getElementById('lifes');
+            lifes_div.innerHTML = '';
+
+            for (var i = 0; i < vidas; i++) {
+                var lifes = document.createElement('img')
+                lifes.setAttribute('src', 'img/pixil-frame-0.png')
+
+                lifes_div.appendChild(lifes)
+            }
+
+            if (vidas == 0) {
+                document.getElementById('result').innerHTML = 'Você perdeu'
+                document.getElementById('restart').style.display = 'block'
+                document.getElementById('exibition-words').innerText = chosen_word[0]
+            } else if (!exibition_word.includes('_')) {
+                document.getElementById('result').innerHTML = 'Parabéns você venceu'
+                document.getElementById('restart').style.display = 'block'
+            }
+        }
+
+        function chute(letra) {
+            if (letters.includes(letra.value)) {
+                alert('Você já tentou essa letra');
+                return;
+            }
+
+            letters.push(letra.value);
+
+            if (chosen_word[0].includes(letra.value)) {
+                for (let i = 0; i < chosen_word[0].length; i++) {
+                    if (chosen_word[0][i] === letra.value) {
+                        exibition_word[i] = letra.value;
+                    }
+                }
+            } else {
+                vidas--;
+            }
+
+            newExibition();
+        }
+
+        console.log(vidas)
+        for (i = 0; i < chosen_word[0].length; i++) {
+            console.log(chosen_word[0][i])
+        }
+        console.log(chosen_word[0])
+
+        //teclado
+        var cletras1 = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P']
+        var cletras2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç']
+        var cletras3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+
+        cria(cletras1, 'tecla1')
+        cria(cletras2, 'tecla2')
+        cria(cletras3, 'tecla3')
+
+        function cria(cletra, ctecla) {
+            var linha = document.getElementById(ctecla)
+
+            for (var i = 0; i < cletra.length; i++) {
+                var btnLetra = document.createElement('input')
+
+                btnLetra.setAttribute('type', 'button')
+                btnLetra.setAttribute('value', cletra[i])
+                btnLetra.setAttribute('id', cletra[i])
+
+                btnLetra.style.marginRight = '5px';
+
+                linha.appendChild(btnLetra)
+
+                btnLetra.addEventListener('mousedown', function () { aperta(this) })
+                btnLetra.addEventListener('mousedown', function () { chute(this) })
+            }
+        }
+
+        function aperta(letra) {
+            console.log("Button pressed:", letra.value)
+        }
+    </script>
+</body>
+
+</html>
